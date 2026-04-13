@@ -1,16 +1,84 @@
-# React + Vite
+# GREEN-API Web Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Single-page React + Vite client for calling GREEN-API methods `getSettings`, `getStateInstance`, `sendMessage`, and `sendFileByUrl`.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19
+- Vite
+- Axios
+- Plain CSS with separated style layers
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Instance credentials form for `idInstance` and `apiTokenInstance`
+- Payload fields for `chatId`, `message`, `fileUrl`, and `fileName`
+- Loading state for the active button
+- UI error feedback
+- Read-only response panel with formatted JSON
+- Shared `initialState`
+- Shared input change handler
+- `buildApiUrl` helper
+- `validateFields` helper
+- `formatJsonResponse` helper
+- Button config through a constants array
+- Adaptive two-column layout close to the test mockup
 
-## Expanding the ESLint configuration
+## Project structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```text
+src/
+├── api/
+│   └── greenApi.js
+├── components/
+│   ├── CredentialsForm.jsx
+│   ├── MessageForm.jsx
+│   ├── FileForm.jsx
+│   ├── ActionButtons.jsx
+│   └── ResponsePanel.jsx
+├── constants/
+│   └── apiMethods.js
+├── utils/
+│   ├── validators.js
+│   └── formatResponse.js
+├── styles/
+│   ├── app.css
+│   ├── forms.css
+│   ├── buttons.css
+│   └── response.css
+├── App.jsx
+└── main.jsx
+```
+
+## Run locally
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Environment variables
+
+```env
+VITE_GREEN_API_URL=https://api.green-api.com
+```
+
+## Deploy to Vercel
+
+1. Push the repository to GitHub.
+2. Import the repository into Vercel.
+3. Select the `Vite` framework preset.
+4. Add `VITE_GREEN_API_URL=https://api.green-api.com` in project environment variables.
+5. Deploy.
+
+Default Vercel settings:
+
+- Build command: `npm run build`
+- Output directory: `dist`

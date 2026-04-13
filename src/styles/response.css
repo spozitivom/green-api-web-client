@@ -1,0 +1,16 @@
+.response-panel {
+  min-height: 100%;
+}
+
+.response-textarea {
+  min-height: 720px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+@media (max-width: 980px) {
+  .response-textarea {
+    min-height: 420px;
+  }
+}
