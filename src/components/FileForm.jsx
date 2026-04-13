@@ -1,4 +1,12 @@
-export function FileForm({ values, disabled, onChange }) {
+export function FileForm({
+  values,
+  disabled,
+  onChange,
+  activeAction,
+  onAction,
+}) {
+  const isLoading = activeAction === 'sendFileByUrl'
+
   return (
     <section className="panel card">
       <div className="panel-heading">
@@ -33,6 +41,16 @@ export function FileForm({ values, disabled, onChange }) {
           />
         </label>
       </div>
+
+      <button
+        type="button"
+        className={`action-button action-button-wide ${isLoading ? 'is-loading' : ''}`}
+        onClick={() => onAction('sendFileByUrl')}
+        disabled={disabled}
+      >
+        <span>sendFileByUrl</span>
+        <span className="button-state">{isLoading ? 'Loading...' : 'Run'}</span>
+      </button>
     </section>
   )
 }

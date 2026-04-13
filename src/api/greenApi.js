@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { formatRequestError } from '../utils/formatters'
+import { formatRequestError } from '../utils/formatResponse'
 
 const DEFAULT_BASE_URL =
   import.meta.env.VITE_GREEN_API_URL || 'https://api.green-api.com'
@@ -12,14 +12,20 @@ const greenApiClient = axios.create({
   timeout: 20000,
 })
 
-const buildMethodUrl = (methodName, idInstance, apiTokenInstance) =>
+export const buildApiUrl = (methodName, idInstance, apiTokenInstance) =>
   `/waInstance${idInstance}/${methodName}/${apiTokenInstance}`
 
-const request = async ({ method = 'get', methodName, idInstance, apiTokenInstance, data }) => {
+const request = async ({
+  method = 'get',
+  methodName,
+  idInstance,
+  apiTokenInstance,
+  data,
+}) => {
   try {
     const response = await greenApiClient.request({
       method,
-      url: buildMethodUrl(methodName, idInstance, apiTokenInstance),
+      url: buildApiUrl(methodName, idInstance, apiTokenInstance),
       data,
     })
 

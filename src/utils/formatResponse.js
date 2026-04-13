@@ -1,12 +1,14 @@
 import axios from 'axios'
 
+export const formatJsonResponse = (data) => JSON.stringify(data, null, 2)
+
 export const formatRequestError = (error) => {
   if (axios.isAxiosError(error)) {
     const apiMessage =
       typeof error.response?.data === 'string'
         ? error.response.data
         : error.response?.data
-          ? JSON.stringify(error.response.data, null, 2)
+          ? formatJsonResponse(error.response.data)
           : null
 
     if (apiMessage) {

@@ -1,6 +1,6 @@
 const isBlank = (value) => !value || !value.trim()
 
-export const buildValidationMessage = (action, form) => {
+export const validateFields = (action, form) => {
   if (isBlank(form.idInstance) || isBlank(form.apiTokenInstance)) {
     return 'Fill in idInstance and apiTokenInstance before calling GREEN-API.'
   }

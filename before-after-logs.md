@@ -53,13 +53,13 @@ npm run lint
 npm run build
 > vite build
 vite v8.0.8 building client environment for production...
-transforming... 77 modules transformed.
+transforming... 79 modules transformed.
 rendering chunks...
 computing gzip size...
 dist/index.html                   0.47 kB | gzip: 0.30 kB
-dist/assets/index-Dm-aDdw7.css    4.70 kB | gzip: 1.77 kB
-dist/assets/index-XQj6z4pN.js   234.58 kB | gzip: 75.99 kB
-built in 167ms
+dist/assets/index-C0P0m5ln.css    4.75 kB | gzip: 1.78 kB
+dist/assets/index-D7HVIXm4.js   235.25 kB | gzip: 76.07 kB
+built in 172ms
 ```
 
 ### Result
@@ -73,6 +73,7 @@ GREEN-API single-page client with:
 - loading states
 - UI error handling
 - readonly response panel
-- responsive card layout
+- separated constants, validators, and response formatter
+- responsive two-column layout close to the provided mockup
 - README deployment guide
 ```

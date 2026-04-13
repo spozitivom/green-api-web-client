@@ -1,20 +1,15 @@
-const ACTIONS = [
-  { id: 'getSettings', label: 'getSettings' },
-  { id: 'getStateInstance', label: 'getStateInstance' },
-  { id: 'sendMessage', label: 'sendMessage' },
-  { id: 'sendFileByUrl', label: 'sendFileByUrl' },
-]
+import { API_METHODS } from '../constants/apiMethods'
 
 export function ActionButtons({ activeAction, disabled, onAction }) {
   return (
     <section className="panel card">
       <div className="panel-heading">
-        <h2>API methods</h2>
-        <p>Each button sends a direct request to the selected GREEN-API method.</p>
+        <h2>Instance methods</h2>
+        <p>Quick access to the two read-only instance endpoints.</p>
       </div>
 
       <div className="actions-grid">
-        {ACTIONS.map((action) => {
+        {API_METHODS.slice(0, 2).map((action) => {
           const isLoading = activeAction === action.id
 
           return (

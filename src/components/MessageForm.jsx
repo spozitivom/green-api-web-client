@@ -1,4 +1,12 @@
-export function MessageForm({ values, disabled, onChange }) {
+export function MessageForm({
+  values,
+  disabled,
+  onChange,
+  activeAction,
+  onAction,
+}) {
+  const isLoading = activeAction === 'sendMessage'
+
   return (
     <section className="panel card">
       <div className="panel-heading">
@@ -32,6 +40,16 @@ export function MessageForm({ values, disabled, onChange }) {
           />
         </label>
       </div>
+
+      <button
+        type="button"
+        className={`action-button action-button-wide ${isLoading ? 'is-loading' : ''}`}
+        onClick={() => onAction('sendMessage')}
+        disabled={disabled}
+      >
+        <span>sendMessage</span>
+        <span className="button-state">{isLoading ? 'Loading...' : 'Run'}</span>
+      </button>
     </section>
   )
 }

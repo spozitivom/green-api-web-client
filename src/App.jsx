@@ -10,12 +10,14 @@ import { CredentialsForm } from './components/CredentialsForm'
 import { FileForm } from './components/FileForm'
 import { MessageForm } from './components/MessageForm'
 import { ResponsePanel } from './components/ResponsePanel'
-import { buildValidationMessage } from './utils/validation'
+import { formatJsonResponse } from './utils/formatResponse'
+import { validateFields } from './utils/validators'
 import './styles/app.css'
 import './styles/forms.css'
 import './styles/buttons.css'
+import './styles/response.css'
 
-const INITIAL_FORM = {
+const initialState = {
   idInstance: '',
   apiTokenInstance: '',
   chatId: '',
@@ -25,7 +27,7 @@ const INITIAL_FORM = {
 }
 
 function App() {
-  const [form, setForm] = useState(INITIAL_FORM)
+  const [form, setForm] = useState(initialState)
   const [responseText, setResponseText] = useState(
     'Responses from GREEN-API methods will appear here.',
   )
@@ -41,7 +43,7 @@ function App() {
   }
 
   const handleAction = async (action) => {
-    const validationMessage = buildValidationMessage(action, form)
+    const validationMessage = validateFields(action, form)
 
     if (validationMessage) {
       setError(validationMessage)
@@ -78,7 +80,7 @@ function App() {
           throw new Error(`Unsupported action: ${action}`)
       }
 
-      setResponseText(JSON.stringify(data, null, 2))
+      setResponseText(formatJsonResponse(data))
     } catch (requestError) {
       const message =
         requestError instanceof Error
@@ -86,16 +88,7 @@ function App() {
           : 'Unknown error while calling GREEN-API.'
 
       setError(message)
-      setResponseText(
-        JSON.stringify(
-          {
-            action,
-            error: message,
-          },
-          null,
-          2,
-        ),
-      )
+      setResponseText(formatJsonResponse({ action, error: message }))
     } finally {
       setLoadingAction('')
     }
@@ -106,10 +99,10 @@ function App() {
       <section className="hero-panel">
         <div className="hero-copy">
           <span className="eyebrow">GREEN-API Web Client</span>
-          <h1>Manage your instance from a clean React + Vite interface</h1>
+          <h1>Call GREEN-API methods from a clear two-column interface</h1>
           <p>
-            Enter instance credentials, call GREEN-API methods, inspect raw
-            responses, and verify message delivery from a single page.
+            Enter instance credentials, run the required methods, and inspect
+            the raw response in a separate read-only panel.
           </p>
         </div>
         <div className="hero-note">
@@ -130,20 +123,24 @@ function App() {
             disabled={Boolean(loadingAction)}
             onChange={handleFieldChange}
           />
-          <ActionButtons
-            activeAction={loadingAction}
-            disabled={Boolean(loadingAction)}
-            onAction={handleAction}
-          />
           <MessageForm
             values={form}
             disabled={Boolean(loadingAction)}
             onChange={handleFieldChange}
+            activeAction={loadingAction}
+            onAction={handleAction}
           />
           <FileForm
             values={form}
             disabled={Boolean(loadingAction)}
             onChange={handleFieldChange}
+            activeAction={loadingAction}
+            onAction={handleAction}
+          />
+          <ActionButtons
+            activeAction={loadingAction}
+            disabled={Boolean(loadingAction)}
+            onAction={handleAction}
           />
         </div>
 
