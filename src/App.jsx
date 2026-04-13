@@ -1,120 +1,155 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {
+  getSettings,
+  getStateInstance,
+  sendFileByUrl,
+  sendMessage,
+} from './api/greenApi'
+import { ActionButtons } from './components/ActionButtons'
+import { CredentialsForm } from './components/CredentialsForm'
+import { FileForm } from './components/FileForm'
+import { MessageForm } from './components/MessageForm'
+import { ResponsePanel } from './components/ResponsePanel'
+import { buildValidationMessage } from './utils/validation'
+import './styles/app.css'
+import './styles/forms.css'
+import './styles/buttons.css'
+
+const INITIAL_FORM = {
+  idInstance: '',
+  apiTokenInstance: '',
+  chatId: '',
+  message: '',
+  fileUrl: '',
+  fileName: '',
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [form, setForm] = useState(INITIAL_FORM)
+  const [responseText, setResponseText] = useState(
+    'Responses from GREEN-API methods will appear here.',
+  )
+  const [error, setError] = useState('')
+  const [loadingAction, setLoadingAction] = useState('')
+
+  const handleFieldChange = (event) => {
+    const { name, value } = event.target
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }))
+  }
+
+  const handleAction = async (action) => {
+    const validationMessage = buildValidationMessage(action, form)
+
+    if (validationMessage) {
+      setError(validationMessage)
+      return
+    }
+
+    setLoadingAction(action)
+    setError('')
+
+    try {
+      let data
+
+      switch (action) {
+        case 'getSettings':
+          data = await getSettings(form.idInstance, form.apiTokenInstance)
+          break
+        case 'getStateInstance':
+          data = await getStateInstance(form.idInstance, form.apiTokenInstance)
+          break
+        case 'sendMessage':
+          data = await sendMessage(form.idInstance, form.apiTokenInstance, {
+            chatId: form.chatId.trim(),
+            message: form.message.trim(),
+          })
+          break
+        case 'sendFileByUrl':
+          data = await sendFileByUrl(form.idInstance, form.apiTokenInstance, {
+            chatId: form.chatId.trim(),
+            urlFile: form.fileUrl.trim(),
+            fileName: form.fileName.trim(),
+          })
+          break
+        default:
+          throw new Error(`Unsupported action: ${action}`)
+      }
+
+      setResponseText(JSON.stringify(data, null, 2))
+    } catch (requestError) {
+      const message =
+        requestError instanceof Error
+          ? requestError.message
+          : 'Unknown error while calling GREEN-API.'
+
+      setError(message)
+      setResponseText(
+        JSON.stringify(
+          {
+            action,
+            error: message,
+          },
+          null,
+          2,
+        ),
+      )
+    } finally {
+      setLoadingAction('')
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
+    <main className="app-shell">
+      <section className="hero-panel">
+        <div className="hero-copy">
+          <span className="eyebrow">GREEN-API Web Client</span>
+          <h1>Manage your instance from a clean React + Vite interface</h1>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            Enter instance credentials, call GREEN-API methods, inspect raw
+            responses, and verify message delivery from a single page.
           </p>
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
+        <div className="hero-note">
+          <strong>Supported methods</strong>
           <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
+            <li>getSettings</li>
+            <li>getStateInstance</li>
+            <li>sendMessage</li>
+            <li>sendFileByUrl</li>
           </ul>
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <section className="workspace-grid">
+        <div className="workspace-column">
+          <CredentialsForm
+            credentials={form}
+            disabled={Boolean(loadingAction)}
+            onChange={handleFieldChange}
+          />
+          <ActionButtons
+            activeAction={loadingAction}
+            disabled={Boolean(loadingAction)}
+            onAction={handleAction}
+          />
+          <MessageForm
+            values={form}
+            disabled={Boolean(loadingAction)}
+            onChange={handleFieldChange}
+          />
+          <FileForm
+            values={form}
+            disabled={Boolean(loadingAction)}
+            onChange={handleFieldChange}
+          />
+        </div>
+
+        <ResponsePanel error={error} responseText={responseText} />
+      </section>
+    </main>
   )
 }
 
